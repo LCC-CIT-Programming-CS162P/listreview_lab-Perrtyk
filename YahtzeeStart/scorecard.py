@@ -12,6 +12,10 @@ def resetScorecard(scorecard):
     The subtotal, bonus and total should be set to 0.
     It does not return a value but the scorecard is altered by the function
     """
+    new_scorecard = [[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, -1],
+                 [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, -1]]
+    scorecard.clear()
+    scorecard.extend(new_scorecard)
 
 
 def updateScorecard(scorecard):
@@ -19,6 +23,56 @@ def updateScorecard(scorecard):
     calculates the subtotal, bonus and total for both the user and the computer.
     It does not return a value but the scorecard is altered by the function
     """
+    if len(scorecard) <= constants.BONUS:
+        return  # scorecard does not have enough elements to calculate bonus
+
+    if len(scorecard[0]) <= constants.USER:
+        return  # user column does not have enough elements to calculate bonus
+
+    # calculate subtotal for user and computer
+    user_subtotal = 0
+    comp_subtotal = 0
+    for row in scorecard[constants.ONES:constants.SIXES + 1]:
+        user_subtotal += row[constants.USER]
+        comp_subtotal += row[constants.COMPUTER]
+
+    # check if user and computer qualify for bonus
+    if user_subtotal >= constants.BONUS:
+        scorecard[constants.BONUS][constants.USER] = constants.BONUS
+    if comp_subtotal >= constants.BONUS:
+        scorecard[constants.BONUS][constants.COMPUTER] = constants.BONUS
+
+    if len(scorecard) <= constants.TOTAL:
+        return  # scorecard does not have enough elements to calculate total
+
+    if len(scorecard[0]) <= constants.TOTAL:
+        return  # total column does not have enough elements to calculate total
+
+    # calculate bonus for user and computer
+    user_bonus = 0
+    comp_bonus = 0
+    if scorecard[constants.BONUS][constants.USER] == constants.BONUS:
+        user_bonus = constants.BONUS_POINTS
+    if scorecard[constants.BONUS][constants.COMPUTER] == constants.BONUS:
+        comp_bonus = constants.BONUS_POINTS
+
+    # calculate total for user and computer
+    user_total = user_subtotal + user_bonus
+    comp_total = comp_subtotal + comp_bonus
+    for row in scorecard[constants.THREE_OF_A_KIND:constants.CHANCE + 1]:
+        user_total += row[constants.USER]
+        comp_total += row[constants.COMPUTER]
+
+    # update scores in scorecard
+    scorecard[constants.SUBTOTAL][constants.USER] = user_subtotal
+    scorecard[constants.SUBTOTAL][constants.COMPUTER] = comp_subtotal
+    scorecard[constants.BONUS][constants.USER] = user_bonus
+    scorecard[constants.BONUS][constants.COMPUTER] = comp_bonus
+    scorecard[constants.TOTAL][constants.USER] = user_total
+    scorecard[constants.TOTAL][constants.COMPUTER] = comp_total
+
+
+
 
 
 def formatCell(value):
@@ -54,7 +108,6 @@ def displayScorecards(scorecard):
     print(border)
     print(lineFormat.format(labels[constants.TOTAL], formatCell(uScorecard[constants.TOTAL]), formatCell(cScorecard[constants.TOTAL]), ""))
     print(border)
-
 
 
 

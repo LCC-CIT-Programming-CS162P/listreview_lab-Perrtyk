@@ -1,7 +1,8 @@
+
 """
     This module contains all of the functions related to playing the game
 """
-
+import time
 from os import system, name
 from time import sleep
 import random
@@ -9,9 +10,42 @@ import random
 import constants
 from validation import getIntInRange
 import scoring
+import scorecard
 
 # TODO: write userPlay.  I've written the rest for you.
 def userPlay(uScorecard):
+    print(f'Scorecard: {uScorecard}')
+    keeping = []
+    rolling = []
+    roll_count = 0
+    item_index = -1
+    while roll_count < 3 and len(keeping) < 5:
+        roll(5 - len(keeping), rolling)
+        print(f'You have rolled: ')
+        displayDice(rolling)
+        roll_count += 1
+        print(f'You have {3 - roll_count} throws left.')
+        if roll_count < 3:
+            getKeeping(rolling, keeping)
+            print(f'keeping {keeping}')
+        else:
+            moveRollToKeep(rolling, keeping)
+            print(f'keeping {keeping}')
+        displayDice(keeping)
+        print()
+
+    time.sleep(1)
+    item_index = getScorecardItem(uScorecard)
+    uScorecard[item_index] = scoring.score(item_index, keeping)
+    print(uScorecard)
+    print(f'item_index = {item_index}')
+
+    print(f'keeping: {keeping}\n'
+          f'rolling: {rolling}\n'
+          f'item_index: {item_index}\n'
+          f'roll_count: {roll_count}\n')
+
+
     """
         create an empty list for the dice you're keeping
         create another empty list for the dice that you're rolling

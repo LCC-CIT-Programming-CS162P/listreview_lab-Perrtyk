@@ -6,13 +6,40 @@ import constants
 import scoring
 import scorecard
 import playing
+import time
 
 # TODO: write main AFTER you have written and tested each function
 def main():
+    card = [[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, -1],
+            [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, -1]]
+    userTurn = False
+    scorecard.resetScorecard(card)
+
+    while any(constants.EMPTY in row for row in card):
+        userTurn = True
+        scorecard.updateScorecard(card)
+        scorecard.displayScorecards(card)
+        time.sleep(1)
+
+        if userTurn:
+            print('Game Message')
+            time.sleep(1)
+            playing.userPlay(card[0])
+            scorecard.displayScorecards(card)
+            userTurn = False
+            playing.clear()
+
+        if not userTurn:
+            print('Game Message')
+            time.sleep(1)
+            playing.computerPlay(card[1])
+            playing.clear()
+
+
     """
-    create a list of lists for the scorecard
-    set userTurn to false
-    call resetScorecard
+    -create a list of lists for the scorecard
+    -set userTurn to false
+    -call resetScorecard
 
     while there are still empty items in either scorecard
         swap players
